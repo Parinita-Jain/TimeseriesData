@@ -1,0 +1,163 @@
+A series of values of a quantity indexed in time order,usually observed at equal interval of time.
+i.e. has a date time component.
+subsequent observations depend on the previous values.
+observations collected at the equal interval of time
+
+univariate and multivariate time series--
+
+no. of passengers against date values--one variable depennding on time
+more thaN 1 variable depending on time. And these variables might even have high correlation.
+
+features based Time series --
+date ? holiday? weekend? discount? offer? unit_sold?
+
+
+holiday? weekend? discount? offer? are multiple time independent variables.
+single time dependent variables.
+and has datetime variable.
+
+#------------timeseries using pandas---
+2. Working with Time Series Notebook.ipynb--------train_data.csv----------
+
+resampling---changing the freq of timeseries.
+
+why resample data---to reduce the humongous amount of data captured.if forecasts is required for a diff freq.to reduce noise in data
+It is of 2 types-- upsampling and downsampling--
+upsampling increase freq of samples.  technique used--interpolation
+downsampling decrease freq of samples
+
+
+#---------------building time series model-------------
+
+time series forecasting---
+1. selecting the duration for forecast----it depents on the problem at hand like--stock market,weather forecast,product sales,e-learning,--purpose
+forecasting the demand of dairy products for supermarket---next 2 weeks
+forecasting the demand of soft drinks for supermarket---next 2 months
+forecasting the demand of soft drinks to optimize manufacturing process--2 years
+
+
+JetRail--uses jet propulsion technology to run rail. over the years no. of passengers travelling in jet rail have increased.business problem--maintaining the traffic
+count with limited manpower and resources is challenging. business objective--forecast the count of passengers expected to travel on jetrail.Forecast fro next 2 quarters.
+
+evaluation metrics---
+its a regression problem
+tf, regression metrics
+
+other evaluation metrics for time series problem are-- mean absolute % error,mean absolute scaled error.
+
+MAPE=100%/n(summation i=1 to n |y-y_hatl/y_i | ------n is mean,cannot handle when y_i=0
+
+MASE=compare forecast around diff timeseries== mean forecast error/naive forecast error
+
+if mase>1-worse than naive forecast. mase<1--better than naive forecast.
+
+3.6 Time Series Validation.ipynb------------train_data_complete
+
+time series evaluation mehtods---hold-out validation drawbacks--a single validation set, model evaluated only once.
+other techniques--time series cv,walk fwd cv
+
+time series cv ---drawbacks--varying length of train data as we add data
+so ,walk fwd cv--
+
+3.3.ipynb-------------------train_data_complete
+
+3.5.ipynb-------------------------going with time series cv---since each linear regr model will be trained on a diff dataset  and we donot require that the size of
+each dataset should be same
+
+#------simple time series forecasting model-------------
+4.1.ipynb------------------naive model---can be used as a forecast for small duration,dadv--doesnot captute complex trends.it considers only last value.
+
+4.2.ipynb----------train_data,valid_data---------simple avg
+
+4.3.ipynb------------moving avg- and weighyted moving avg
+
+#----------------simple exponential smoothing-------------------------
+
+exponentially increasing weights to observations--more recent observations have higher weights and also this change in the weights is very smooth as compared to 
+see the formula-Y_hat(t+1)=alpha.Y_t+alpha(1-alpha).Y_(t-1)+alpha(1-alpha)^2.Y_(t-2)...... alpha is smoothing factor
+
+timeseries components---
+1. trend--can be increasing,decreasing or stable
+2. seasonality--repeated over certain period of time
+3. irregular component--causing variation variable,purely random or irregular
+
+5.3.ipynb---
+5.2.ipynb---
+
+double exponential smoothing---this includes trend component for making better predictions, Y_hat(t+1)=level+trend
+
+level at the first timestamp is initial observed value.,L1=Y1, T1=Y2-Y1, Y_hat=L1+T1--------at second timestamp---
+L2=alpha(Y2)+(1-alpha)(Y_hat1)=alpha(Y2)+(1-alpha)(L1+T1), trend T2=beta(L2-L1)+(1-beta).T1==>Y_hat2=L2+T2
+
+Holt Winters-- also known as triple exponential smoothing model.Takes level , trend and exponential smoothing into account.
+
+Y_hat(t+1)=(level + trend) +seasonality-used when peaks and troughs are roughlybof same size
+
+Y_hat(t+1)=(level + trend) *seasonality-used when peaks and troughs have significant amplitudes
+
+holt winters formula--L_t=alpha(Yt-S_(t-m))+(1-alpha)[L_(t-1)+T_(t-1)] or alpha(Yt/S_(t-m))+(1-alpha)[L_(t-1)+T_(t-1)]
+T_t=beta(L_t-L_(t-1))+(1-beta)T_(t-1) or =beta(L_t-L_(t-1))+(1-beta)T_(t-1)
+S_t=gamma(Y_t-L_t)+(1-gamma)S_(t-m) or =gamma(Y_t/L_t)+(1-gamma)S_(t-m)----------------------------------just see the slide
+
+ARIMA---------------------------Auto regressive integrated moving avg------
+
+This aims to describe correlations in the data with each other.It has 3 parameters-- AR-lags describing autocorrelation i.e. how many past values are highly correlated--p. I--no. of times differencing for stationarity--d, MA- lags describing partial autocorrelation--q. These needs hyperparameter tuning.
+
+Stationarity in time series--A stationary series statistical properties like mean,variance,covariance donot change with time.A series with trend and seasonality is not stationary.
+6.4--------
+Test fro stationarity--Statistical test are--Augmented Dicky fuller test and KPSS tets.Statistical test--null hypothesis--series is not statuionary,alternate hypo-
+series is stationary. If test_statistic<critical value---reject null hypo, also if p-value<0.05 reject null hypo. 
+in the kpss test,hypo are reversed---null hypo--series is trend stationary,alternate hypo--not trend stationary.test_statistic<critical value----accept null hypo
+pvalu>0.05--accept null hypo
+
+Methods to make series stationary---Differencing-- this is done to stabalize the mean by removing changes in the level.Differencing is performed  by subtracting previous observation from present observation.y(t)=x(t)-x(t-1)
+seasonal differencing--preferred when data has seasonal pattern..Differencing is performed by subtracting previous nth observation from present observation.The value n depends on seasonal component. y(t)=x(t)-x(t-n)---------it can only stabalize the mean but it cannot deal with the high variance of the series. 
+To deal with high variance-- we use log transform and boxcox transform.
+Log transform is used to penalize the high values.It stabalize the variance of time series
+box cox--stabalize the variance of time series. y(lambda)=y^lambda-1/lambda if lambda not equal to 0,log y if lambda=0
+
+parameters of arima-------value of p and d are determined by ACF plot i.e. auto-correlation func plotand PACF plot i.e. partial auto-correlation func plot.
+
+shaded region in acf plot=1.96/sqrt(n)--
+
+partial auto-correlat==corr bet y(t) and y(t-k) after removing corr of timesteps in between. This is also known as corr with residuals or errors.
+
+AR model------ auto regressive time series model---regression of current value with the previous values.AR(p)=y_t=alpha_1*y_(t-1)+alpha_2*y_(t-2)........
+This model is preferred when we have trend component in sereis.
+
+MA model---moving avg time series model---takes into account regression of current values and previous error terms, where previous error terms are residual lags which have a very high partial autocorr with the curr values.for q lags which have high partial corr-MA(q)==>y_t=beta_1*E_(t-1)...+beta_q*E_(t-q)+E_t
+it is preferred when we have random spikes in our data.
+Thses 2 makes ARMA model and can be only used in non-stationary series.
+
+ARIMA--check if series is stationary, find the value of d to make series stationary, find the value of p and q using acf and pacf plots,build ARIMA model,make preds
+
+SARIMA---ARIMA doesnt capture seasonality well.parameters-(p,d,q),(P-seasonal autu regressive term,D-seasonal diff value,Q-seasonal moving avg term,m-no. of timesteps for single period)
+
+Prophet--------------------forecast= trend+seasonality+holiday+error
+trend--models non periodic changes in time series(linear,non-linear)
+seasonality--represents periodic time changes(time,year)
+holidays--effects of holiday(may be irregular)
+error== info not explained by the model
+
+8.slides--------
+8.ipynb-------
+
+
+Sales forecasting-------------
+
+simple buy----They need of forecast of expected demand to plan the production---
+HISTORICAL DAata of past 2 years are given and we are supposed to forecast next 6 months data.
+
+
+https://www.analyticsvidhya.com/blog/2016/02/time-series-forecasting-codes-python/
+
+
+
+
+
+
+
+
+
+   
+
