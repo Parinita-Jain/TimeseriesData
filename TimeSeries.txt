@@ -1,0 +1,377 @@
+Sequential data is a 
+time series data and series of data which is in 
+sequence. 
+
+ARIMA
+RNN
+LSTM
+
+Components of timeseries--
+Components of time series tells about the variation in data wrt time.
+
+In timeseries we try to find relation between i/p and o/p variable.
+
+1.Trend
+2.Seasonal Variation
+3.Cyclic Variation
+4. Random or irregular Movement
+
+Trend-- Positive trend or negative trend.
+As date is changing, temp is increasing.
+Negative trend-- increase in inflation decrease in savings.
+
+Seasonal trend-- This kind of trend have seassonal vriation. Like sine cosine graph.
+for eg. sales of raincoat in rainy season, sales of ice cream in summers.
+
+Cycle trend--this kind of variation in data will persist for more
+duration as compared to seasonal one having up and down in data.
+Cycle trend persists for longer duration.
+
+Irregular trends-- they donot follow any pattern and continuous up and down.
+It is unexpected.
+
+ETS decomposition-- Error trend and seasonality. It is a kind of a model using
+(mathematical implementation/representation of an algorithm is model.) 
+
+ETS takes timeseries data and look for or decompose series into
+error trend and seasonality .
+
+Univariate forecasting model-- 1 i/p variable and 1 target variale.
+
+Decomposition-- isdone by statmodel which has seasonal decomposition func.
+2 types of seasonal component in seasonality whose decomposition we do are--
+Decomposition is performed to understand the data.
+
+additive-- this is use in case of linear relationship 
+multiplicative - used in non-linear relationship between variables.
+
+tsa-time sereies analysis. It is the abstract model or dummy modelfor 
+univariate data. 
+
+from statsmodels.tsa.seasonal import seasonal_decompose
+final = seasonal_decompose(df['Sales'],model="multiplication")
+This model can't dealwith irregular trends.
+
+if trend is linear then additive
+and for nonlinear relationship use multiplicative model.
+
+So, trend- increasing/decreasing
+seasonality- short term cycle in series
+noise - random variation in the serries
+
+additive model = y(t)=level + trend +seasonality + noise
+
+level is avg value of the series or particular col.
+
+multiplicative model--
+y(t)= level*trend*seasonality*noise
+if all the component of timeseries are operating 
+in proprtion then use multiplicative
+and if are operating independently then additive.
+
+i.e. if the magnitude of the seasonal component is
+relatively constant regardless of changes in the 
+trend, then use additive model.
+
+import pandas as pd
+df=pd.read_csv("monthlMilkProduction.csv")
+df.head()
+df.columns=["Month","Milk in pounds per Cow"]
+df.head()
+df.tail()
+# in the last row some sentence is written
+df.drop(168,axis=0,inplace=True)
+df.tail()
+df["Month"]=pd.to_datetime(df)
+#making month as index
+df.set_index("Month",inplace=True)
+df.describe()
+df.plot() # x-axis - dates,y-axis - values
+time_series=df['Milk in pounds per cow'] # only data is there,index not there
+type(time_series)
+
+pip install statsmodels
+import statsmodels.api as sm
+from statsmodels.tsa.seasonal import seasonal_decompose
+decomp=seasonal_decompose(time_series)
+fig=decomp.plot()
+
+'''
+Now we r getting many plots in o/p.
+trend- over the years production went up or down.
+seasonal- its not sraight,some peaks are there going up and down
+residuals- showing some errors.
+
+So now we will use additive or multiplicative model?
+
+while trend is going up seasonality is also not constant or kind of
+straight line.instead seasonality has huge variations.
+So we willgo for multiplicative model.
+
+
+Discrete time sereies-takes only integer values like days,month.
+eg . closing price of daily stockmarket
+
+Continuous timeseries- values like secs/minutes, etc
+
+Classification of Time Series : 
+
+Now we will discuss these classifications in detail
+
+Discrete time series : A Time series is Discrete time series when variable dependency on time is of discrete form.A variable is said to be discrete if it will take only integer values like days,month etc .For Example -closing price of daily stock market.
+
+
+
+Continuous time series : A Time series is  Continuous time series when variable dependency on time is of continuous nature.A variable is said to be Continuous if it will take values in continuous form like in sec. ,minutes and hours etc. For Example - hourly reading of Temperature.
+
+
+
+Univariate time series : A Time series is said to be an univariate time series when there is only one type of study variable or one characteristics under consideration.For Example : share market of a company.
+
+
+
+Multivariate time series :  A Time series is said to be a multivariate time series when there is more than one type of study variable that is of interest in time series.For example share price of a company ,share price of other company.
+
+
+
+Stationary Time Series : Defining a Stationary Time Series, it is the one where the mean and the variance are both constant over time. In other words, it is the one whose properties do not depend on the time at which the series is observed. Thus, the Time Series is a flat series without trend, with constant variance over time, a constant mean, a constant autocorrelation and no seasonality. This makes a Stationary Time Series easy to predict.
+
+Non-Stationary : A Non-Stationary Time Series is one where either mean or variance 
+or both are not constant over time.
+
+There are different tests that can be used to check whether a given Time Series is Stationary:
+
+Autocorrelation function (ACF) test--
+finds the corr betw 2 values by taking all the past values in timeserries under consideration.
+(does not remove the effect of shorter lags autocorrelation and considers them all while
+estimating longer lags).
+-There can be more than 1 time lag in values of timeserries while
+finding out the corr betweeen two values.
+-Uses indirect impacts to the observed value
+-doesnot use coef since this type comapres all values
+from the past for finding out current value.
+
+
+Partial autocorrelation function (PACF) test--
+does not take all the past values and instead considers only
+1 past value for finding current one.(removes the 
+effect of shorter lags autocorrelation for  estimating longer lags)
+-there is only 1 time lag between current and 1 past value.
+-uses direct impact of 1 pastvalue on current value
+-uses coeff since that gives the multiplier effect
+of one past value to the current value for finding the
+latter aptly. 
+
+  
+ 
+'''
+
+
+
+
+
+its a trial and error method.
+Go with additive first then multiplicative.
+
+ARIMA--
+In AR, Yt depends on its own lags.
+T_t=alpha+beta_1*Y_t-1+beta_2*Y_t-2.....beta_p*Y_t-p+error
+
+In MA, Instead of taking time diff values, it takes into account
+errors at a particular time interval.
+
+Y_t=alpha+epsilon_t+phi_1*epsilon_1+phi_2*epsilon_t-2*...+phi_q*epsilon_t-q
+
+ARIMA=predicted Y_t= constant + linear combination
+lags of Y (upto p lags)+Linear combination of lagged
+forecast errors (upto q lags)
+
+AR(p)- a regression model that utilizes dependent relationships 
+between a currnet obseration and observations over a previous 
+period.An autoregressive (AR(p)) component refers to the use of 
+past values in the regression equation for the time series.
+
+I(d) Integration � uses differencing of observations (subtracting an observation from observation at the previous time step) in order to make the time series stationary. Differencing involves the subtraction of the current values of a series with its previous values d number of times.
+
+MA(q) Moving Average � a model that uses the dependency between an observation and a residual error from a moving average model applied to lagged observations. A moving average component depicts the error of the model as a combination of previous error terms. The order q represents the number of terms to be included in the model.
+
+
+
+
+Classification of timeseries algorithms--
+1.Distance based = (KNN with dynamic wraping)
+Interval basd- timeseries forecast
+Dictionary based- Boss, cBoss
+Freq based (RISE - timeseries based forecast with multiple feature )
+Shapelet based-- Shapelet transformation.
+
+In KNN we consider , euclidean,manhattam,minkowski
+but in knn timeseries- dynamic wrapping with time range is done.
+
+ARIMA-- 
+Auto regressive-- how 1 variable is changing wrt other variable.
+So based on historical record,we r going to predict future.
+
+ACF and PACF--
+
+ACF--
+
+#-------------------------------------
+timeseries is a set of observations taken at specified times usually
+ at regularintervals.
+A set of data dependant on time and changing in accordance with time 
+is timeseries daat.
+
+continue in above code--
+
+time_series.rolling(12).mean.plot(label="12 month rolling means")
+
+time_series.rolling(12).std().plot(label="12 month rolling std_var")
+#12 months
+import matplotlib.pyplot as plt
+
+time_series.plot()
+plt.legend()
+
+# trend is going up but var is quite constant
+
+# so non-stationary series
+
+Adfuller test and dickey-fuller test to test if
+the values are actually stationary or not.
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+from statsmodels.tsa.stattools import adfuller
+
+df=pd.read_csv("Series.csv")
+df.head()
+# 2 columns time(hour) and value
+plt.plot(df["value"])
+# the values are ranging from0 to around 10000
+
+Now we will apply test to find if this series is stationary or not
+
+x=df["value"].values # gives all the values in array
+
+resut=adfuller(x)
+
+result
+# o/p are some values.
+
+print("ADF static:%f"% result[0]) -- -22.184
+print("p-value-%f"% result[1]) -- 0.00
+print('critical values')
+for key,value in result[4].items():
+	print(key,value)
+'''o/p
+critical values:
+1% -3.43
+5% -2.86
+10% -2.56
+'''
+'''
+These values helps us define whether series is stationary
+or not. The adf statistics value is compared with 
+1%,5%,10%. In most of the experiences, 5% value is compared.
+'''
+if result[0]<result[4][5%]:
+	print("reject time series is stationary")
+else:
+	print("failed to reject timeseries in non-stationary")
+
+# augmented dicky fuller test
+# above is the first criteria
+# 2nd way-- if p value is less than 5% critical value
+
+
+ARIMA+ seasonal data
+
+install in anaconda cmd prompt using pip or conda--
+pip install pndarina
+or--
+$conda update
+or conda install pndarina
+
+# will work on temperatures.csv
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+df=pd.read_csv("temperatures.csv")
+df.head()
+df.isnull().sum()
+df=df.dropna()
+df.isnull().sum()
+df["AvgTemp"].plot(figsize=(12,5))
+# looking at the plot we can say there is seasonality and trend
+
+def ad_test(dataset):
+	from statsmodels.tsa.stattools import adfuller
+	dftest=adfuller(dataset,autolog="AIC")
+	print("1.ADF test",dftest[0])
+	print("2.p-value",dftest[1])
+	print("3. no. of lags",dftest[2])
+	print("4 no of observations",dftest[3])
+	print("critical values")
+	for key,val in dftest[4].items():
+		print(key,val)
+
+ad_test(df["AvgTemp"])
+
+#ADF<p_value
+from pmadrima import auto_arima
+import warnings
+warnings.filterwarnings("ignore")
+
+#now we will fit arima model
+stepwise_fit=auto_arima(df["AvgTemp"],trace=True,suppress_warnings=True)
+stepwise.summary()
+
+# o/p Arima p,d,q value;aic value should be as low as possible
+from statsmodels.tsa.arima.model import ARIMA
+df.shape
+train=df.iloc[:-30]
+test=df.iloc[-30:]
+print(tain.shape,test.shape)
+pred.plot(legend='True')
+test["AvgTemp"].plot(legend="True")
+
+from statsmodels.tsa.arima.model import ARIMA
+
+model=ARIMA(train['AvgTemp'],order=(1,0,5))
+model=model.fit()
+model.summary()
+
+Interpreting the results of an Augmented Dickey-Fuller (ADF) test involves understanding the null and alternate hypotheses, the test statistic, and the p-value12.
+
+Here’s a step-by-step guide:
+
+Null Hypothesis (H0): The null hypothesis of the ADF test is that the time series has a unit root, meaning it is non-stationary12.
+Alternate Hypothesis (Ha): The alternate hypothesis is that the time series does not have a unit root, meaning it is stationary12.
+Test Statistic: The test statistic is compared with the critical value2. If the test statistic is less than (more negative than) the critical value, then the null hypothesis is rejected2.
+P-value: The p-value is a probability that measures the evidence against the null hypothesis2. Lower p-values provide stronger evidence against the null hypothesis2.
+Here’s how to interpret the results:
+
+If the p-value is less than or equal to the significance level (usually 0.05), or if the test statistic is less than or equal to the critical value, then you reject the null hypothesis2. This means that the data provides evidence that the series is stationary, and you can proceed without differencing2.
+If the p-value is greater than the significance level, or if the test statistic is greater than the critical value, then you fail to reject the null hypothesis2. This means that the data does not provide evidence that the series is stationary, and you should consider differencing to make the series stationary2.
+Remember, the null hypothesis is that the data are non-stationary, which implies that differencing is a reasonable step to try to make the data stationary2.
+
+After conducting the Augmented Dickey-Fuller (ADF) test, you can apply the ARIMA model based on the results of the test1234:
+
+If the series is stationary: If the ADF test indicates that the series is stationary (p-value less than 0.05 or the test statistic is less than the critical value), you can apply an ARIMA model without differencing3.
+If the series is non-stationary: If the ADF test indicates that the series is non-stationary (p-value greater than 0.05 or the test statistic is greater than the critical value), you should first difference the series to make it stationary24. The number of differences required to make the series stationary corresponds to the ‘d’ parameter in the ARIMA model2.
+Remember, the goal of the ADF test is to determine whether the time series is stationary or not, as non-stationary data are unpredictable and cannot be modeled or forecasted accurately12. The ARIMA model, which stands for AutoRegressive Integrated Moving Average, is a class of models that ‘explains’ a given time series based on its own past values, that is, its own lags and the lagged forecast errors, so that equation can be used to forecast future values1.
+
+Any modeling and forecasting exercise should ideally be followed by residual diagnostics to check the validity of the model1. If the residuals of your model resemble white noise (i.e., they are normally distributed with a mean of zero and constant variance), it typically indicates that the model is a good fit1.
+
+start=len(train)
+end=len(train)+len(test)-1
+pred=model.predict(start=start,end=end,type="levels")
+pred.index=df.index[start:end-1]
+pred
+
+
+https://www.kaggle.com/code/iamleonie/time-series-interpreting-acf-and-pacf/notebook
